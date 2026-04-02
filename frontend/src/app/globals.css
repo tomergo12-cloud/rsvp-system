@@ -1,0 +1,157 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-bg: #faf8f4;
+  --color-surface: #f5f1ea;
+  --color-border: rgba(176, 161, 134, 0.3);
+  --color-text: #1e1a17;
+  --color-muted: #796d5e;
+  --color-gold: #d4a931;
+  --color-gold-light: #f0d48a;
+  --color-blush: #f2b8ae;
+  --color-ink: #1e1a17;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Grain overlay ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+  opacity: 0.6;
+}
+
+/* ── Typography ── */
+.font-display { font-family: var(--font-cormorant), Georgia, serif; }
+.font-body    { font-family: var(--font-jost), system-ui, sans-serif; }
+.font-mono    { font-family: var(--font-dm-mono), monospace; }
+
+/* ── Gold shimmer text ── */
+.text-gold-shimmer {
+  background: linear-gradient(
+    90deg,
+    #b8891c 0%,
+    #d4a931 30%,
+    #f0d48a 50%,
+    #d4a931 70%,
+    #b8891c 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 3s linear infinite;
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% center; }
+  100% { background-position: -200% center; }
+}
+
+/* ── Animated ornament line ── */
+.ornament-line {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.ornament-line::before,
+.ornament-line::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--color-gold), transparent);
+}
+
+/* ── Status badge ── */
+.badge {
+  @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-body font-medium tracking-wide;
+}
+.badge-yes    { @apply bg-emerald-50 text-emerald-700 border border-emerald-200; }
+.badge-no     { @apply bg-red-50 text-red-600 border border-red-200; }
+.badge-maybe  { @apply bg-amber-50 text-amber-700 border border-amber-200; }
+.badge-pending { @apply bg-gray-100 text-gray-500 border border-gray-200; }
+
+/* ── Card ── */
+.card {
+  @apply bg-white/60 backdrop-blur-sm border border-ink-100/60 rounded-2xl shadow-sm;
+}
+
+/* ── Input base ── */
+.input-base {
+  @apply w-full px-4 py-3 rounded-xl border border-ink-200/60 bg-white/80
+         font-body text-sm text-ink-900 placeholder-ink-400
+         focus:outline-none focus:ring-2 focus:ring-gold-400/40 focus:border-gold-500
+         transition-all duration-200;
+}
+
+/* ── Button variants ── */
+.btn-gold {
+  @apply inline-flex items-center justify-center gap-2
+         px-6 py-3 rounded-xl
+         bg-gradient-to-br from-gold-500 to-gold-600
+         text-white font-body font-medium text-sm tracking-wide
+         shadow-md shadow-gold-500/20
+         hover:from-gold-400 hover:to-gold-500 hover:shadow-lg hover:shadow-gold-500/30
+         active:scale-[0.98]
+         disabled:opacity-50 disabled:cursor-not-allowed
+         transition-all duration-200;
+}
+
+.btn-ghost {
+  @apply inline-flex items-center justify-center gap-2
+         px-5 py-2.5 rounded-xl
+         border border-ink-200 text-ink-600
+         font-body font-medium text-sm
+         hover:bg-ink-50 hover:border-ink-300
+         active:scale-[0.98]
+         transition-all duration-150;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: rgba(176, 161, 134, 0.4);
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover { background: rgba(176, 161, 134, 0.7); }
+
+/* ── Table ── */
+.table-row-hover {
+  @apply hover:bg-gold-300/10 transition-colors duration-100 cursor-default;
+}
+
+/* ── Fade-up stagger helper ── */
+.stagger-1 { animation-delay: 0.05s; }
+.stagger-2 { animation-delay: 0.10s; }
+.stagger-3 { animation-delay: 0.15s; }
+.stagger-4 { animation-delay: 0.20s; }
+.stagger-5 { animation-delay: 0.25s; }
+.stagger-6 { animation-delay: 0.30s; }
+
+.animate-fade-up { opacity: 0; animation: fadeUp 0.55s ease forwards; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

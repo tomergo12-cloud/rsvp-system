@@ -1,0 +1,81 @@
+version: '3.9'
+
+services:
+  # ── PostgreSQL ─────────────────────────────────────────────────────────────
+  db:
+    image: postgres:16-alpine
+    container_name: rsvp_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-password}
+      POSTGRES_DB: rsvp_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d rsvp_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # ── FastAPI Backend ────────────────────────────────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: rsvp_backend
+    restart: unless-stopped
+    env_file:
+      - ./backend/.env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:${DB_PASSWORD:-password}@db:5432/rsvp_db
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app  # remove in production
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload  # remove --reload in production
+
+  # ── Next.js Frontend ───────────────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${API_URL:-http://localhost:8000}
+        NEXT_PUBLIC_EVENT_NAME: ${EVENT_NAME:-Our Special Event}
+        NEXT_PUBLIC_EVENT_DATE: ${EVENT_DATE:-December 31, 2024}
+        NEXT_PUBLIC_EVENT_LOCATION: ${EVENT_LOCATION:-Grand Ballroom}
+    container_name: rsvp_frontend
+    restart: unless-stopped
+    environment:
+      NEXT_PUBLIC_API_URL: ${API_URL:-http://localhost:8000}
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+  # ── Nginx Reverse Proxy (optional but recommended) ─────────────────────────
+  nginx:
+    image: nginx:alpine
+    container_name: rsvp_nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/certs:/etc/nginx/certs:ro  # mount your SSL certs
+    depends_on:
+      - backend
+      - frontend
+    profiles:
+      - production  # Only starts with: docker-compose --profile production up
+
+volumes:
+  postgres_data:
+    driver: local
