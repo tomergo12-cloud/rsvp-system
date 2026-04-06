@@ -46,3 +46,6 @@ class Settings(BaseSettings):
             return json.loads(self.CORS_ORIGINS)
         except Exception:
             return [self.CORS_ORIGINS]
+
+
+settings = Settings()
