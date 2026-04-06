@@ -1,3 +1,4 @@
+from typing import Optional
 import qrcode
 import base64
 from io import BytesIO
@@ -5,13 +6,6 @@ from app.config import settings
 
 
 def generate_qr_code(url: Optional[str] = None) -> tuple[str, str]:
-    """
-    Generate a QR code for the RSVP URL.
-
-    Returns:
-        (data_url, rsvp_url) - base64 PNG data URL and the RSVP URL
-    """
-    from typing import Optional
     rsvp_url = url or f"{settings.APP_URL}/rsvp"
 
     qr = qrcode.QRCode(
