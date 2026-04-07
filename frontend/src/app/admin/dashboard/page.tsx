@@ -152,7 +152,7 @@ export default function DashboardPage() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         <StatCard
           label="Confirmed" value={data?.confirmed ?? 0}
-          sub={`+${data?.total_guests ?? 0} guests`}
+          sub={`סה"כ ${(data?.confirmed ?? 0) + (data?.total_guests ?? 0)} איש מגיעים`}
           color="bg-emerald-50 text-emerald-600" icon={UserCheck}
         />
         <StatCard
