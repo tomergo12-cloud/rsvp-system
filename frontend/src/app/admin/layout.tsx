@@ -32,7 +32,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     );
   }
 
-  if (!isAuthenticated) return null;
+ if (!isAuthenticated && pathname !== '/admin/login') return null;
 
   return (
     <div className="min-h-screen flex" style={{ background: '#f5f1ea' }}>
