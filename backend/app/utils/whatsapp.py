@@ -51,11 +51,15 @@ async def send_whatsapp_invite(
         "Content-Type": "application/json",
     }
 
-    payload = {
-        "messaging_product": "whatsapp",
-        "to": clean_phone,
-        "type": "text",
-        "text": {"body": message_body},
+ payload = {
+    "messaging_product": "whatsapp",
+    "to": clean_phone,
+    "type": "template",
+    "template": {
+        "name": "hello_world",
+        "language": {"code": "en_US"}
+    }
+
     }
 
     async with httpx.AsyncClient(timeout=10.0) as client:
