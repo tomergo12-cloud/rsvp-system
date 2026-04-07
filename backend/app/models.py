@@ -18,7 +18,7 @@ class Attendee(Base):
     name = Column(String(200), nullable=False)
     phone = Column(String(30), nullable=False, unique=True, index=True)
     guests_count = Column(Integer, default=0, nullable=False)
-    status = Column(SAEnum(AttendanceStatus), default=AttendanceStatus.PENDING, nullable=False)
+    status = Column(SAEnum(AttendanceStatus, values_callable=lambda obj: [e.value for e in obj]), default=AttendanceStatus.PENDING, nullable=False)
     notes = Column(Text, nullable=True)
     dietary = Column(String(200), nullable=True)
     invite_sent = Column(Boolean, default=False)
