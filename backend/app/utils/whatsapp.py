@@ -62,7 +62,8 @@ async def send_whatsapp_invite(
 
     async with httpx.AsyncClient(timeout=10.0) as client:
         response = await client.post(url, headers=headers, json=payload)
-        response.raise_for_status()
+        if not response.is_success:
+            raise Exception(f"WhatsApp API error: {response.text}")
         return response.json()
 
 
